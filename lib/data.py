@@ -52,8 +52,8 @@ def load_data(opt):
         }
 
         dataset = {}
-        dataset['train'] = CIFAR10(root='./data', train=True, download=True, transform=transform)
-        dataset['test'] = CIFAR10(root='./data', train=False, download=True, transform=transform)
+        dataset['train'] = CIFAR10(root=opt.dataroot, train=True, download=True, transform=transform)
+        dataset['test'] = CIFAR10(root=opt.dataroot, train=False, download=True, transform=transform)
 
         dataset['train'].train_data, dataset['train'].train_labels, \
         dataset['test'].test_data, dataset['test'].test_labels = get_cifar_anomaly_dataset(
@@ -87,8 +87,8 @@ def load_data(opt):
         )
 
         dataset = {}
-        dataset['train'] = MNIST(root='./data', train=True, download=True, transform=transform)
-        dataset['test'] = MNIST(root='./data', train=False, download=True, transform=transform)
+        dataset['train'] = MNIST(root=opt.dataroot, train=True, download=True, transform=transform)
+        dataset['test'] = MNIST(root=opt.dataroot, train=False, download=True, transform=transform)
 
         dataset['train'].train_data, dataset['train'].train_labels, \
         dataset['test'].test_data, dataset['test'].test_labels = get_mnist_anomaly_dataset(
@@ -122,8 +122,8 @@ def load_data(opt):
         )
 
         dataset = {}
-        dataset['train'] = MNIST(root='./data', train=True, download=True, transform=transform)
-        dataset['test'] = MNIST(root='./data', train=False, download=True, transform=transform)
+        dataset['train'] = MNIST(root=opt.dataroot, train=True, download=True, transform=transform)
+        dataset['test'] = MNIST(root=opt.dataroot, train=False, download=True, transform=transform)
 
         dataset['train'].train_data, dataset['train'].train_labels, \
         dataset['test'].test_data, dataset['test'].test_labels = get_mnist2_anomaly_dataset(
