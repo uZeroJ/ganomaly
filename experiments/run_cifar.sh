@@ -9,7 +9,9 @@ do
     for i in "${arr[@]}";
     do
         echo "Running CIFAR. Anomaly Class: $i "
-        python train.py --dataset cifar10 --isize 32 --niter 15 --anomaly_class $i --manualseed $m
+        python train.py --dataset cifar10 --isize 32 \
+        --niter 15 --anomaly_class $i --manualseed $m \
+        --dataroot /nfs/project/jayzhengjia/WORK/paddlepaddle_data/mnist
     done
 done
 exit 0
