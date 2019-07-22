@@ -123,6 +123,7 @@ class Ganomaly(object):
             input (FloatTensor): Input data for batch i.
         """
         self.input.resize_(input[0].size()).copy_(input[0])
+        self.input.resize_(input[0].size()).copy_(input[0])
         self.gt.resize_(input[1].size()).copy_(input[1])
 
         # Copy the first batch as the fixed input.
@@ -140,6 +141,7 @@ class Ganomaly(object):
         # --
         # Train with real
         self.label.resize_(self.opt.batchsize).fill_(self.real_label)
+        print(self.input.shape)
         self.out_d_real, self.feat_real = self.netd(self.input)
         # --
         # Train with fake
