@@ -96,7 +96,7 @@ def load_data(opt):
             trn_lbl=dataset['train'].train_labels,
             tst_img=dataset['test'].test_data,
             tst_lbl=dataset['test'].test_labels,
-            abn_cls_idx=opt.anomaly_class
+            abn_cls_idx=int(opt.anomaly_class)
         )
 
         dataloader = {x: torch.utils.data.DataLoader(dataset=dataset[x],
