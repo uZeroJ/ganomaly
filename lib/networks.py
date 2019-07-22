@@ -146,6 +146,7 @@ class NetD(nn.Module):
 
     def __init__(self, opt):
         super(NetD, self).__init__()
+        print(opt.isize, opt.nc, opt.ngf)
         model = Encoder(opt.isize, 1, opt.nc, opt.ngf, opt.ngpu, opt.extralayers)
         layers = list(model.main.children())
 

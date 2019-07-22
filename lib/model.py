@@ -123,7 +123,6 @@ class Ganomaly(object):
             input (FloatTensor): Input data for batch i.
         """
         self.input.resize_(input[0].size()).copy_(input[0])
-        self.input.resize_(input[0].size()).copy_(input[0])
         self.gt.resize_(input[1].size()).copy_(input[1])
 
         # Copy the first batch as the fixed input.
