@@ -155,13 +155,13 @@ class NetD(nn.Module):
         self.classifier.add_module('Sigmoid', nn.Sigmoid())
 
     def forward(self, x):
-        print(x.shape)
-        print(self.features)
+        # print(x.shape)
+        # print(self.features)
         features = self.features(x)
-        print(features.shape)
+        # print(features.shape)
         features = features
         classifier = self.classifier(features)
-        print(classifier.shape)
+        # print(classifier.shape)
         classifier = classifier.view(-1, 1).squeeze(1)
 
         return classifier, features

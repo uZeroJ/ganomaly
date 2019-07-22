@@ -76,6 +76,8 @@ def load_data(opt):
 
     elif opt.dataset in ['mnist']:
         opt.anomaly_class = int(opt.anomaly_class)
+        # ZJ: set to match mnist channel
+        opt.nc = 1
 
         splits = ['train', 'test']
         drop_last_batch = {'train': True, 'test': False}

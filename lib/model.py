@@ -140,7 +140,7 @@ class Ganomaly(object):
         # --
         # Train with real
         self.label.resize_(self.opt.batchsize).fill_(self.real_label)
-        print(self.input.shape)
+        # print(self.input.shape)
         self.out_d_real, self.feat_real = self.netd(self.input)
         # --
         # Train with fake
@@ -329,7 +329,7 @@ class Ganomaly(object):
             self.latent_o = torch.zeros(size=(len(self.dataloader['test'].dataset), self.opt.nz),
                                         dtype=torch.float32, device=self.device)
 
-            # print("   Testing model %s." % self.name())
+            print("   Testing model %s." % self.name())
             self.times = []
             self.total_steps = 0
             epoch_iter = 0
