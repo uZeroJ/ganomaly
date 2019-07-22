@@ -114,12 +114,14 @@ class Ganomaly(object):
         Args:
             input (FloatTensor): Input data for batch i.
         """
-        self.input.data.resize_(input[0].size()).copy_(input[0])
-        self.gt.data.resize_(input[1].size()).copy_(input[1])
+        with torch.no_grad():
+            self.input.data.resize_(input[0].size()).copy_(input[0])
+            self.gt.data.resize_(input[1].size()).copy_(input[1])
 
         # Copy the first batch as the fixed input.
         if self.total_steps == self.opt.batchsize:
-            self.fixed_input.data.resize_(input[0].size()).copy_(input[0])
+            with torch.no_grad():
+                self.fixed_input.data.resize_(input[0].size()).copy_(input[0])
 
     ##
     def update_netd(self):
@@ -131,11 +133,13 @@ class Ganomaly(object):
         self.netd.zero_grad()
         # --
         # Train with real
-        self.label.data.resize_(self.opt.batchsize).fill_(self.real_label)
+        with torch.no_grad():
+            self.label.data.resize_(self.opt.batchsize).fill_(self.real_label)
         self.out_d_real, self.feat_real = self.netd(self.input)
         # --
         # Train with fake
-        self.label.data.resize_(self.opt.batchsize).fill_(self.fake_label)
+        with torch.no_grad():
+            self.label.data.resize_(self.opt.batchsize).fill_(self.fake_label)
         self.fake, self.latent_i, self.latent_o = self.netg(self.input)
         self.out_d_fake, self.feat_fake = self.netd(self.fake.detach())
         # --
@@ -162,7 +166,8 @@ class Ganomaly(object):
 
         """
         self.netg.zero_grad()
-        self.label.data.resize_(self.opt.batchsize).fill_(self.real_label)
+        with torch.no_grad():
+            self.label.data.resize_(self.opt.batchsize).fill_(self.real_label)
         self.out_g, _ = self.netd(self.fake)
 
         self.err_g_bce = self.bce_criterion(self.out_g, self.label)
