@@ -14,6 +14,7 @@ from torchvision.datasets import CIFAR10
 from torchvision.datasets import ImageFolder
 import torchvision.transforms as transforms
 
+
 ##
 def load_data(opt):
     """ Load Data
@@ -52,8 +53,10 @@ def load_data(opt):
         }
 
         dataset = {}
-        dataset['train'] = CIFAR10(root=opt.dataroot, train=True, download=True, transform=transform)
-        dataset['test'] = CIFAR10(root=opt.dataroot, train=False, download=True, transform=transform)
+        dataset['train'] = CIFAR10(root=opt.dataroot, train=True, download=True,
+                                   transform=transform)
+        dataset['test'] = CIFAR10(root=opt.dataroot, train=False, download=True,
+                                  transform=transform)
 
         dataset['train'].train_data, dataset['train'].train_labels, \
         dataset['test'].test_data, dataset['test'].test_labels = get_cifar_anomaly_dataset(
@@ -90,8 +93,10 @@ def load_data(opt):
         dataset['train'] = MNIST(root=opt.dataroot, train=True, download=True, transform=transform)
         dataset['test'] = MNIST(root=opt.dataroot, train=False, download=True, transform=transform)
 
-        dataset['train'].train_data, dataset['train'].train_labels, \
-        dataset['test'].test_data, dataset['test'].test_labels = get_mnist_anomaly_dataset(
+        # dataset['train'].train_data, dataset['train'].train_labels, \
+        # dataset['test'].test_data, dataset['test'].test_labels = get_mnist_anomaly_dataset(
+        dataset['train'].data, dataset['train'].targets, \
+        dataset['test'].data, dataset['test'].targets = get_mnist_anomaly_dataset(
             trn_img=dataset['train'].train_data,
             trn_lbl=dataset['train'].train_labels,
             tst_img=dataset['test'].test_data,
@@ -159,6 +164,7 @@ def load_data(opt):
                                                      drop_last=drop_last_batch[x]) for x in splits}
         return dataloader
 
+
 ##
 def get_cifar_anomaly_dataset(trn_img, trn_lbl, tst_img, tst_lbl, abn_cls_idx=0, manualseed=-1):
     """[summary]
@@ -183,17 +189,17 @@ def get_cifar_anomaly_dataset(trn_img, trn_lbl, tst_img, tst_lbl, abn_cls_idx=0,
     # Find idx, img, lbl for abnormal and normal on org dataset.
     nrm_trn_idx = np.where(trn_lbl != abn_cls_idx)[0]
     abn_trn_idx = np.where(trn_lbl == abn_cls_idx)[0]
-    nrm_trn_img = trn_img[nrm_trn_idx]    # Normal training images
-    abn_trn_img = trn_img[abn_trn_idx]    # Abnormal training images
-    nrm_trn_lbl = trn_lbl[nrm_trn_idx]    # Normal training labels
-    abn_trn_lbl = trn_lbl[abn_trn_idx]    # Abnormal training labels.
+    nrm_trn_img = trn_img[nrm_trn_idx]  # Normal training images
+    abn_trn_img = trn_img[abn_trn_idx]  # Abnormal training images
+    nrm_trn_lbl = trn_lbl[nrm_trn_idx]  # Normal training labels
+    abn_trn_lbl = trn_lbl[abn_trn_idx]  # Abnormal training labels.
 
     nrm_tst_idx = np.where(tst_lbl != abn_cls_idx)[0]
     abn_tst_idx = np.where(tst_lbl == abn_cls_idx)[0]
-    nrm_tst_img = tst_img[nrm_tst_idx]    # Normal training images
-    abn_tst_img = tst_img[abn_tst_idx]    # Abnormal training images.
-    nrm_tst_lbl = tst_lbl[nrm_tst_idx]    # Normal training labels
-    abn_tst_lbl = tst_lbl[abn_tst_idx]    # Abnormal training labels.
+    nrm_tst_img = tst_img[nrm_tst_idx]  # Normal training images
+    abn_tst_img = tst_img[abn_tst_idx]  # Abnormal training images.
+    nrm_tst_lbl = tst_lbl[nrm_tst_idx]  # Normal training labels
+    abn_tst_lbl = tst_lbl[abn_tst_idx]  # Abnormal training labels.
 
     # --
     # Assign labels to normal (0) and abnormals (1)
@@ -239,6 +245,7 @@ def get_cifar_anomaly_dataset(trn_img, trn_lbl, tst_img, tst_lbl, abn_cls_idx=0,
 
     return new_trn_img, new_trn_lbl, new_tst_img, new_tst_lbl
 
+
 ##
 def get_mnist_anomaly_dataset(trn_img, trn_lbl, tst_img, tst_lbl, abn_cls_idx=0, manualseed=-1):
     """[summary]
@@ -264,17 +271,17 @@ def get_mnist_anomaly_dataset(trn_img, trn_lbl, tst_img, tst_lbl, abn_cls_idx=0,
 
     # --
     # Find normal and abnormal images
-    nrm_trn_img = trn_img[nrm_trn_idx]    # Normal training images
-    abn_trn_img = trn_img[abn_trn_idx]    # Abnormal training images.
-    nrm_tst_img = tst_img[nrm_tst_idx]    # Normal training images
-    abn_tst_img = tst_img[abn_tst_idx]    # Abnormal training images.
+    nrm_trn_img = trn_img[nrm_trn_idx]  # Normal training images
+    abn_trn_img = trn_img[abn_trn_idx]  # Abnormal training images.
+    nrm_tst_img = tst_img[nrm_tst_idx]  # Normal training images
+    abn_tst_img = tst_img[abn_tst_idx]  # Abnormal training images.
 
     # --
     # Find normal and abnormal labels.
-    nrm_trn_lbl = trn_lbl[nrm_trn_idx]    # Normal training labels
-    abn_trn_lbl = trn_lbl[abn_trn_idx]    # Abnormal training labels.
-    nrm_tst_lbl = tst_lbl[nrm_tst_idx]    # Normal training labels
-    abn_tst_lbl = tst_lbl[abn_tst_idx]    # Abnormal training labels.
+    nrm_trn_lbl = trn_lbl[nrm_trn_idx]  # Normal training labels
+    abn_trn_lbl = trn_lbl[abn_trn_idx]  # Abnormal training labels.
+    nrm_tst_lbl = tst_lbl[nrm_tst_idx]  # Normal training labels
+    abn_tst_lbl = tst_lbl[abn_tst_idx]  # Abnormal training labels.
 
     # --
     # Assign labels to normal (0) and abnormals (1)
@@ -314,6 +321,7 @@ def get_mnist_anomaly_dataset(trn_img, trn_lbl, tst_img, tst_lbl, abn_cls_idx=0,
 
     return new_trn_img, new_trn_lbl, new_tst_img, new_tst_lbl
 
+
 ##
 def get_mnist2_anomaly_dataset(trn_img, trn_lbl, tst_img, tst_lbl, nrm_cls_idx=0, proportion=0.5):
     """ Create mnist 2 anomaly dataset.
@@ -342,20 +350,19 @@ def get_mnist2_anomaly_dataset(trn_img, trn_lbl, tst_img, tst_lbl, nrm_cls_idx=0
     abn_tst_idx = abn_tst_idx[torch.randperm(len(abn_tst_idx))]
     abn_tst_idx = abn_tst_idx[:int(len(abn_tst_idx) * proportion)]
 
-
     # --
     # Find normal and abnormal images
-    nrm_trn_img = trn_img[nrm_trn_idx]    # Normal training images
-    abn_trn_img = trn_img[abn_trn_idx]    # Abnormal training images.
-    nrm_tst_img = tst_img[nrm_tst_idx]    # Normal training images
-    abn_tst_img = tst_img[abn_tst_idx]    # Abnormal training images.
+    nrm_trn_img = trn_img[nrm_trn_idx]  # Normal training images
+    abn_trn_img = trn_img[abn_trn_idx]  # Abnormal training images.
+    nrm_tst_img = tst_img[nrm_tst_idx]  # Normal training images
+    abn_tst_img = tst_img[abn_tst_idx]  # Abnormal training images.
 
     # --
     # Find normal and abnormal labels.
-    nrm_trn_lbl = trn_lbl[nrm_trn_idx]    # Normal training labels
-    abn_trn_lbl = trn_lbl[abn_trn_idx]    # Abnormal training labels.
-    nrm_tst_lbl = tst_lbl[nrm_tst_idx]    # Normal training labels
-    abn_tst_lbl = tst_lbl[abn_tst_idx]    # Abnormal training labels.
+    nrm_trn_lbl = trn_lbl[nrm_trn_idx]  # Normal training labels
+    abn_trn_lbl = trn_lbl[abn_trn_idx]  # Abnormal training labels.
+    nrm_tst_lbl = tst_lbl[nrm_tst_idx]  # Normal training labels
+    abn_tst_lbl = tst_lbl[abn_tst_idx]  # Abnormal training labels.
 
     # --
     # Assign labels to normal (0) and abnormals (1)
