@@ -7,6 +7,7 @@ import torch
 import torch.nn as nn
 import torch.nn.parallel
 
+
 ##
 def weights_init(mod):
     """
@@ -20,6 +21,7 @@ def weights_init(mod):
     elif classname.find('BatchNorm') != -1:
         mod.weight.data.normal_(1.0, 0.02)
         mod.bias.data.fill_(0)
+
 
 ###
 class Encoder(nn.Module):
@@ -76,11 +78,13 @@ class Encoder(nn.Module):
 
         return output
 
+
 ##
 class Decoder(nn.Module):
     """
     DCGAN DECODER NETWORK
     """
+
     def __init__(self, isize, nz, nc, ngf, ngpu, n_extra_layers=0):
         super(Decoder, self).__init__()
         self.ngpu = ngpu
@@ -150,12 +154,16 @@ class NetD(nn.Module):
         self.classifier.add_module('Sigmoid', nn.Sigmoid())
 
     def forward(self, x):
+        print(x.shape)
         features = self.features(x)
+        print(features.shape)
         features = features
         classifier = self.classifier(features)
+        print(classifier.shape)
         classifier = classifier.view(-1, 1).squeeze(1)
 
         return classifier, features
+
 
 ##
 class NetG(nn.Module):
