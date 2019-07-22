@@ -155,6 +155,7 @@ class NetD(nn.Module):
 
     def forward(self, x):
         print(x.shape)
+        print(self.features)
         features = self.features(x)
         print(features.shape)
         features = features
