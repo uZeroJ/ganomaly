@@ -11,7 +11,7 @@ do
         echo "Running CIFAR. Anomaly Class: $i "
         python train.py --dataset cifar10 --isize 32 \
         --niter 15 --anomaly_class $i --manualseed $m \
-        --dataroot /nfs/project/jayzhengjia/WORK/paddlepaddle_data/mnist
+        --dataroot $CIFAR_DATA_PATH
     done
 done
 exit 0
