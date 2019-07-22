@@ -20,6 +20,7 @@ from lib.visualizer import Visualizer
 from lib.loss import l2_loss
 from lib.evaluate import evaluate
 
+
 ##
 class Ganomaly(object):
     """GANomaly Class
@@ -77,8 +78,10 @@ class Ganomaly(object):
         if self.opt.resume != '':
             print("\nLoading pre-trained networks.")
             self.opt.iter = torch.load(os.path.join(self.opt.resume, 'netG.pth'))['epoch']
-            self.netg.load_state_dict(torch.load(os.path.join(self.opt.resume, 'netG.pth'))['state_dict'])
-            self.netd.load_state_dict(torch.load(os.path.join(self.opt.resume, 'netD.pth'))['state_dict'])
+            self.netg.load_state_dict(
+                torch.load(os.path.join(self.opt.resume, 'netG.pth'))['state_dict'])
+            self.netd.load_state_dict(
+                torch.load(os.path.join(self.opt.resume, 'netD.pth'))['state_dict'])
             print("\tDone.\n")
 
         # print(self.netg)
@@ -92,10 +95,13 @@ class Ganomaly(object):
 
         ##
         # Initialize input tensors.
-        self.input = torch.empty(size=(self.opt.batchsize, 3, self.opt.isize, self.opt.isize), dtype=torch.float32, device=self.device)
-        self.label = torch.empty(size=(self.opt.batchsize,), dtype=torch.float32, device=self.device)
-        self.gt    = torch.empty(size=(opt.batchsize,), dtype=torch.long, device=self.device)
-        self.fixed_input = torch.empty(size=(self.opt.batchsize, 3, self.opt.isize, self.opt.isize), dtype=torch.float32, device=self.device)
+        self.input = torch.empty(size=(self.opt.batchsize, 3, self.opt.isize, self.opt.isize),
+                                 dtype=torch.float32, device=self.device)
+        self.label = torch.empty(size=(self.opt.batchsize,), dtype=torch.float32,
+                                 device=self.device)
+        self.gt = torch.empty(size=(opt.batchsize,), dtype=torch.long, device=self.device)
+        self.fixed_input = torch.empty(size=(self.opt.batchsize, 3, self.opt.isize, self.opt.isize),
+                                       dtype=torch.float32, device=self.device)
         self.real_label = 1
         self.fake_label = 0
 
@@ -104,8 +110,10 @@ class Ganomaly(object):
         if self.opt.isTrain:
             self.netg.train()
             self.netd.train()
-            self.optimizer_d = optim.Adam(self.netd.parameters(), lr=self.opt.lr, betas=(self.opt.beta1, 0.999))
-            self.optimizer_g = optim.Adam(self.netg.parameters(), lr=self.opt.lr, betas=(self.opt.beta1, 0.999))
+            self.optimizer_d = optim.Adam(self.netd.parameters(), lr=self.opt.lr,
+                                          betas=(self.opt.beta1, 0.999))
+            self.optimizer_g = optim.Adam(self.netg.parameters(), lr=self.opt.lr,
+                                          betas=(self.opt.beta1, 0.999))
 
     ##
     def set_input(self, input):
@@ -114,14 +122,12 @@ class Ganomaly(object):
         Args:
             input (FloatTensor): Input data for batch i.
         """
-        with torch.no_grad():
-            self.input.data.resize_(input[0].size()).copy_(input[0])
-            self.gt.data.resize_(input[1].size()).copy_(input[1])
+        self.input.resize_(input[0].size()).copy_(input[0])
+        self.gt.resize_(input[1].size()).copy_(input[1])
 
         # Copy the first batch as the fixed input.
         if self.total_steps == self.opt.batchsize:
-            with torch.no_grad():
-                self.fixed_input.data.resize_(input[0].size()).copy_(input[0])
+            self.fixed_input.resize_(input[0].size()).copy_(input[0])
 
     ##
     def update_netd(self):
@@ -133,13 +139,11 @@ class Ganomaly(object):
         self.netd.zero_grad()
         # --
         # Train with real
-        with torch.no_grad():
-            self.label.data.resize_(self.opt.batchsize).fill_(self.real_label)
+        self.label.resize_(self.opt.batchsize).fill_(self.real_label)
         self.out_d_real, self.feat_real = self.netd(self.input)
         # --
         # Train with fake
-        with torch.no_grad():
-            self.label.data.resize_(self.opt.batchsize).fill_(self.fake_label)
+        self.label.resize_(self.opt.batchsize).fill_(self.fake_label)
         self.fake, self.latent_i, self.latent_o = self.netg(self.input)
         self.out_d_fake, self.feat_fake = self.netd(self.fake.detach())
         # --
@@ -148,7 +152,6 @@ class Ganomaly(object):
         self.err_d_fake = self.err_d
         self.err_d.backward()
         self.optimizer_d.step()
-
 
     ##
     def reinitialize_netd(self):
@@ -166,8 +169,7 @@ class Ganomaly(object):
 
         """
         self.netg.zero_grad()
-        with torch.no_grad():
-            self.label.data.resize_(self.opt.batchsize).fill_(self.real_label)
+        self.label.resize_(self.opt.batchsize).fill_(self.real_label)
         self.out_g, _ = self.netd(self.fake)
 
         self.err_g_bce = self.bce_criterion(self.out_g, self.label)
@@ -246,7 +248,8 @@ class Ganomaly(object):
 
         self.netg.train()
         epoch_iter = 0
-        for data in tqdm(self.dataloader['train'], leave=False, total=len(self.dataloader['train'])):
+        for data in tqdm(self.dataloader['train'], leave=False,
+                         total=len(self.dataloader['train'])):
             self.total_steps += self.opt.batchsize
             epoch_iter += self.opt.batchsize
 
@@ -265,8 +268,9 @@ class Ganomaly(object):
                 if self.opt.display:
                     self.visualizer.display_current_images(reals, fakes, fixed)
 
-        print(">> Training model %s. Epoch %d/%d" % (self.name(), self.epoch+1, self.opt.niter))
+        print(">> Training model %s. Epoch %d/%d" % (self.name(), self.epoch + 1, self.opt.niter))
         # self.visualizer.print_current_errors(self.epoch, errors)
+
     ##
     def train(self):
         """ Train the model
@@ -302,7 +306,8 @@ class Ganomaly(object):
         with torch.no_grad():
             # Load the weights of netg and netd.
             if self.opt.load_weights:
-                path = "./output/{}/{}/train/weights/netG.pth".format(self.name().lower(), self.opt.dataset)
+                path = "./output/{}/{}/train/weights/netG.pth".format(self.name().lower(),
+                                                                      self.opt.dataset)
                 pretrained_dict = torch.load(path)['state_dict']
 
                 try:
@@ -314,10 +319,14 @@ class Ganomaly(object):
             self.opt.phase = 'test'
 
             # Create big error tensor for the test set.
-            self.an_scores = torch.zeros(size=(len(self.dataloader['test'].dataset),), dtype=torch.float32, device=self.device)
-            self.gt_labels = torch.zeros(size=(len(self.dataloader['test'].dataset),), dtype=torch.long,    device=self.device)
-            self.latent_i  = torch.zeros(size=(len(self.dataloader['test'].dataset), self.opt.nz), dtype=torch.float32, device=self.device)
-            self.latent_o  = torch.zeros(size=(len(self.dataloader['test'].dataset), self.opt.nz), dtype=torch.float32, device=self.device)
+            self.an_scores = torch.zeros(size=(len(self.dataloader['test'].dataset),),
+                                         dtype=torch.float32, device=self.device)
+            self.gt_labels = torch.zeros(size=(len(self.dataloader['test'].dataset),),
+                                         dtype=torch.long, device=self.device)
+            self.latent_i = torch.zeros(size=(len(self.dataloader['test'].dataset), self.opt.nz),
+                                        dtype=torch.float32, device=self.device)
+            self.latent_o = torch.zeros(size=(len(self.dataloader['test'].dataset), self.opt.nz),
+                                        dtype=torch.float32, device=self.device)
 
             # print("   Testing model %s." % self.name())
             self.times = []
@@ -330,13 +339,19 @@ class Ganomaly(object):
                 self.set_input(data)
                 self.fake, latent_i, latent_o = self.netg(self.input)
 
-                error = torch.mean(torch.pow((latent_i-latent_o), 2), dim=1)
+                error = torch.mean(torch.pow((latent_i - latent_o), 2), dim=1)
                 time_o = time.time()
 
-                self.an_scores[i*self.opt.batchsize : i*self.opt.batchsize+error.size(0)] = error.reshape(error.size(0))
-                self.gt_labels[i*self.opt.batchsize : i*self.opt.batchsize+error.size(0)] = self.gt.reshape(error.size(0))
-                self.latent_i [i*self.opt.batchsize : i*self.opt.batchsize+error.size(0), :] = latent_i.reshape(error.size(0), self.opt.nz)
-                self.latent_o [i*self.opt.batchsize : i*self.opt.batchsize+error.size(0), :] = latent_o.reshape(error.size(0), self.opt.nz)
+                self.an_scores[
+                i * self.opt.batchsize: i * self.opt.batchsize + error.size(0)] = error.reshape(
+                    error.size(0))
+                self.gt_labels[
+                i * self.opt.batchsize: i * self.opt.batchsize + error.size(0)] = self.gt.reshape(
+                    error.size(0))
+                self.latent_i[i * self.opt.batchsize: i * self.opt.batchsize + error.size(0),
+                :] = latent_i.reshape(error.size(0), self.opt.nz)
+                self.latent_o[i * self.opt.batchsize: i * self.opt.batchsize + error.size(0),
+                :] = latent_o.reshape(error.size(0), self.opt.nz)
 
                 self.times.append(time_o - time_i)
 
@@ -346,15 +361,16 @@ class Ganomaly(object):
                     if not os.path.isdir(dst):
                         os.makedirs(dst)
                     real, fake, _ = self.get_current_images()
-                    vutils.save_image(real, '%s/real_%03d.eps' % (dst, i+1), normalize=True)
-                    vutils.save_image(fake, '%s/fake_%03d.eps' % (dst, i+1), normalize=True)
+                    vutils.save_image(real, '%s/real_%03d.eps' % (dst, i + 1), normalize=True)
+                    vutils.save_image(fake, '%s/fake_%03d.eps' % (dst, i + 1), normalize=True)
 
             # Measure inference time.
             self.times = np.array(self.times)
             self.times = np.mean(self.times[:100] * 1000)
 
             # Scale error vector between [0, 1]
-            self.an_scores = (self.an_scores - torch.min(self.an_scores)) / (torch.max(self.an_scores) - torch.min(self.an_scores))
+            self.an_scores = (self.an_scores - torch.min(self.an_scores)) / (
+                        torch.max(self.an_scores) - torch.min(self.an_scores))
             # auc, eer = roc(self.gt_labels, self.an_scores)
             auc = evaluate(self.gt_labels, self.an_scores, metric=self.opt.metric)
             performance = OrderedDict([('Avg Run Time (ms/batch)', self.times), ('AUC', auc)])
